@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="description" content="Science-based tinnitus relief using cross-frequency de-correlating sound therapy. Reduce tinnitus loudness with daily 60-minute sessions.">
+    <title>Un-Tinnitus - Science-Based Tinnitus Relief</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#top">Un-Tinnitus</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="jumbotron">
+            <h1 class="display-4">Welcome to Un-Tinnitus</h1>
+            <p class="lead">This app uses scientifically-proven sound therapy with cross-frequency de-correlating modulation to reduce tinnitus loudness.</p>
+            <hr class="my-4">
+            
+            <!-- Demo Audio Player -->
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white">
+                    <h3>Start Your Treatment</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Step 1: Frequency Matching -->
+                    <div id="frequencyMatching">
+                        <h5>Step 1: Match Your Tinnitus Frequency</h5>
+                        <div class="alert alert-info">
+                            <strong>🎧 Put on headphones first!</strong> Set your device volume to about 30-40% before starting.
+                        </div>
+
+                        <p><strong>What to do:</strong> Click the play button (▶) next to each frequency to hear a test tone. Choose the one that sounds most similar to your tinnitus ringing or buzzing.</p>
+
+                        <p class="small text-muted"><strong>Don't worry about being exact!</strong> The treatment works even with approximate matching. Most people have tinnitus between 4-11 kHz (middle to high pitched).</p>
+
+                        <div class="mt-4">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>1.0 kHz</strong>
+                                                    <span class="badge bg-secondary ms-2">Low Pitch</span>
+                                                    <div class="small text-muted">Deep hum or buzz</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="1000">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>2.0 kHz</strong>
+                                                    <div class="small text-muted">Low-mid tone</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="2000">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>4.0 kHz</strong>
+                                                    <span class="badge bg-info ms-2">Common</span>
+                                                    <div class="small text-muted">Mid-range whistle</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="4000">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>5.7 kHz</strong>
+                                                    <div class="small text-muted">Higher whistle</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="5700">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>8.0 kHz</strong>
+                                                    <span class="badge bg-info ms-2">Very Common</span>
+                                                    <div class="small text-muted">High-pitched ringing</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="8000">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>9.5 kHz</strong>
+                                                    <div class="small text-muted">Very high ringing</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="9500">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>11.0 kHz</strong>
+                                                    <span class="badge bg-warning text-dark ms-2">High</span>
+                                                    <div class="small text-muted">Piercing tone</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="11000">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>13.0 kHz</strong>
+                                                    <span class="badge bg-warning text-dark ms-2">Very High</span>
+                                                    <div class="small text-muted">Extreme high pitch</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-primary freq-play-btn" data-freq="13000">▶ Play</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <label class="form-label"><strong>My best match is:</strong></label>
+                                <select id="tinnitusFrequency" class="form-select mb-3">
+                                    <option value="">-- Choose the closest match --</option>
+                                    <option value="1000">1.0 kHz (Low pitch)</option>
+                                    <option value="2000">2.0 kHz</option>
+                                    <option value="4000">4.0 kHz (Common)</option>
+                                    <option value="5700">5.7 kHz</option>
+                                    <option value="8000">8.0 kHz (Very common)</option>
+                                    <option value="9500">9.5 kHz</option>
+                                    <option value="11000">11.0 kHz</option>
+                                    <option value="13000">13.0 kHz (Very high)</option>
+                                </select>
+                                <button id="confirmFrequency" class="btn btn-primary btn-lg w-100" disabled>Continue to Next Step →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Hearing Profile -->
+                    <div id="hearingProfile" style="display:none;">
+                        <h5>Step 2: Your Hearing Profile</h5>
+                        <p><strong>What to do:</strong> Select the option that best describes your hearing. This helps us adjust the treatment sounds for your ears.</p>
+
+                        <p class="small text-muted"><strong>Not sure?</strong> Choose "Normal hearing" - the treatment will still work!</p>
+
+                        <div class="mt-3">
+                            <div class="list-group mb-3">
+                                <label class="list-group-item list-group-item-action">
+                                    <input class="form-check-input me-2" type="radio" name="hearingProfile" value="normal" checked>
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <strong>Normal hearing</strong>
+                                        <span class="badge bg-success">Most Common</span>
+                                    </div>
+                                    <small class="text-muted">I can hear most sounds clearly, including high-pitched sounds</small>
+                                </label>
+                                <label class="list-group-item list-group-item-action">
+                                    <input class="form-check-input me-2" type="radio" name="hearingProfile" value="mild">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <strong>Mild hearing difficulty</strong>
+                                    </div>
+                                    <small class="text-muted">I sometimes struggle to hear high-pitched sounds or speech in noise</small>
+                                </label>
+                                <label class="list-group-item list-group-item-action">
+                                    <input class="form-check-input me-2" type="radio" name="hearingProfile" value="moderate">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <strong>Moderate hearing difficulty</strong>
+                                    </div>
+                                    <small class="text-muted">I often have trouble hearing conversations or high sounds</small>
+                                </label>
+                                <label class="list-group-item list-group-item-action">
+                                    <input class="form-check-input me-2" type="radio" name="hearingProfile" value="severe">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <strong>Significant hearing difficulty</strong>
+                                    </div>
+                                    <small class="text-muted">I have diagnosed hearing loss or use hearing aids</small>
+                                </label>
+                            </div>
+                            <button id="confirmHearing" class="btn btn-primary btn-lg w-100">Continue to Next Step →</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Volume Calibration -->
+                    <div id="demoCalibration" style="display:none;">
+                        <h5>Step 3: Set Your Volume</h5>
+
+                        <div class="alert alert-warning">
+                            <strong>⚠️ Important:</strong> The volume should be comfortable - not loud! You'll be listening for 60 minutes.
+                        </div>
+
+                        <p><strong>What to do:</strong></p>
+                        <ol>
+                            <li>Use the slider to adjust the volume</li>
+                            <li>Click "Play Test Sound" to hear a sample</li>
+                            <li>Adjust until it's <strong>pleasant and comfortable</strong></li>
+                            <li>The sound should be noticeable but NOT annoying</li>
+                        </ol>
+
+                        <div id="demoVolumeControls" class="mt-3">
+                            <label for="demoVolumeSlider" class="form-label"><strong>Volume Level</strong></label>
+                            <input type="range" id="demoVolumeSlider" class="form-range" min="0" max="0.6" step="0.01" value="0.3">
+                            <div class="text-center mb-3">
+                                <small class="text-muted">Quieter ←→ Louder</small>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button id="demoTestTone" class="btn btn-secondary btn-lg">▶ Play Test Sound (2 seconds)</button>
+                                <button id="demoCalibrationDone" class="btn btn-success btn-lg">This Sounds Good - Continue →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Treatment -->
+                    <div id="demoTreatment" style="display:none;">
+                        <h5>Step 4: Your Treatment Session</h5>
+
+                        <div class="alert alert-success">
+                            <strong>✓ You're all set!</strong> Your personalized tinnitus treatment is ready.
+                        </div>
+
+                        <p><strong>What happens next:</strong></p>
+                        <ul>
+                            <li>Click "Start Treatment" below</li>
+                            <li>Listen for <strong>60 minutes</strong> (you can multitask!)</li>
+                            <li>The sound will play continuously</li>
+                            <li>A progress bar will show your time remaining</li>
+                        </ul>
+
+                        <p class="small text-muted"><strong>💡 Tips:</strong> You can work, read, browse, or relax while listening. Keep your headphones on and device nearby. If uncomfortable, you can stop anytime.</p>
+
+                        <p class="small text-muted"><strong>🔒 Safety:</strong> Stop immediately if you experience pain, dizziness, or increased tinnitus. The volume is capped at safe levels.</p>
+
+                        <button id="demoStartTreatment" class="btn btn-primary btn-lg w-100 mt-3">🎵 Start 60-Minute Treatment</button>
+
+                        <div id="demoTreatmentProgress" class="mt-3" style="display:none;">
+                            <div class="progress">
+                                <div id="demoProgressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <p class="mt-2">Time remaining: <span id="demoTimeRemaining">60:00</span></p>
+                            <button id="demoStopTreatment" class="btn btn-danger">Stop Treatment</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Complete -->
+                    <div id="demoComplete" class="mt-3" style="display:none;">
+                        <div class="alert alert-success">
+                            <p><strong>Treatment Session Complete!</strong></p>
+                            <p>The therapeutic effects may continue for several weeks with regular daily use.</p>
+                            <p><strong>Recommended:</strong> Listen for 60 minutes daily for 6 weeks for best results.</p>
+                            <div class="mt-2">
+                                <button id="resetDemo" class="btn btn-primary">Start New Session</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h3>The Science Behind It</h3>
+                </div>
+                <div class="card-body">
+                    <p>Based on research published in <em>Hearing Research</em> (2025), this app uses a novel sound modulation technique that significantly reduces tinnitus loudness.</p>
+
+                    <h5>Key Research Findings:</h5>
+                    <ul>
+                        <li><strong>Significant tinnitus loudness reduction</strong> (p = 0.012) after 6 weeks of daily 60-minute listening</li>
+                        <li>Effects <strong>persisted for weeks</strong> after completing treatment</li>
+                        <li>Works for both <strong>tonal and broadband</strong> tinnitus types</li>
+                        <li>No specialist equipment or audiologist required</li>
+                        <li>Uses cross-frequency de-correlating modulation to reduce neural synchrony</li>
+                        <li>Completely automated and deliverable with standard headphones</li>
+                    </ul>
+
+                    <h5 class="mt-3">How It Works:</h5>
+                    <p>The treatment uses harmonic complex sounds modulated with continuously varying spectral ripples. This eliminates stable correlations between frequency pairs near your tinnitus frequency, reducing the excessive neural synchrony that underlies tinnitus perception.</p>
+
+                    <p class="mt-3"><a href="https://www.sciencedirect.com/science/article/pii/S0378595525001534" target="_blank" class="btn btn-sm btn-outline-primary">Read the research paper</a></p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-warning">
+                    <h3>How to Use</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Getting Started:</h5>
+                            <ol>
+                                <li>Put on headphones (required for best results)</li>
+                                <li>Match your tinnitus frequency from the test tones</li>
+                                <li>Select your hearing profile</li>
+                                <li>Calibrate volume to a comfortable level</li>
+                                <li>Listen for 60 minutes daily</li>
+                            </ol>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Best Practices:</h5>
+                            <ul>
+                                <li>Use over-ear headphones for best results</li>
+                                <li>Listen for 60 minutes per day</li>
+                                <li>Continue for 6 weeks for maximum benefit</li>
+                                <li>Keep volume at comfortable level (max 60%)</li>
+                                <li>You can multitask while listening</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h3>Privacy Information</h3>
+                </div>
+                <div class="card-body">
+                    <h5>Completely Private Experience</h5>
+                    <ul>
+                        <li>All processing happens in your browser only</li>
+                        <li>No data is sent to any servers</li>
+                        <li>Your experience is completely anonymous</li>
+                        <li>No cookies or tracking</li>
+                        <li>Works offline once loaded</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-5 py-4 border-top">
+        <p class="text-muted">&copy; 2025 Un-Tinnitus - Science-Based Tinnitus Relief. Based on peer-reviewed research.</p>
+        <p class="text-muted small">This is not a medical device. Consult healthcare professionals for severe or persistent tinnitus.</p>
+        <p class="text-muted small mt-3"><a href="https://dabidao.com" target="_blank" rel="noopener noreferrer">By Dabidao</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
