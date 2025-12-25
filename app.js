@@ -512,7 +512,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 const wakeLockEnabled = await requestWakeLock();
                 if (!wakeLockEnabled) {
                     // Show warning if wake lock not available
-                    alert('Note: Your screen may turn off during treatment. To prevent this, please adjust your device settings to keep the screen on, or use the Download option instead.');
+                    const continueAnyway = confirm(
+                        'Wake Lock not supported on this browser.\n\n' +
+                        'Your screen may turn off and stop the audio during treatment.\n\n' +
+                        'Recommendations:\n' +
+                        '• Keep your screen on manually during the 60-minute session\n' +
+                        '• OR use the "Download MP3 File" option instead (plays even with screen off)\n\n' +
+                        'Continue with streaming anyway?'
+                    );
+                    if (!continueAnyway) {
+                        isPlaying = false;
+                        demoTreatmentProgress.style.display = 'none';
+                        return;
+                    }
+                } else {
+                    // Wake lock enabled
+                    alert('Screen will stay on during treatment. Do not manually lock your screen with the power button, as this will stop audio playback.');
                 }
 
                 // Initialize MediaSession for background playback
@@ -563,40 +578,38 @@ document.addEventListener('DOMContentLoaded', function() {
             downloadSession.textContent = 'Checking file...';
 
             try {
-                // Check if file exists
-                const response = await fetch(fileUrl, { method: 'HEAD' });
+                // Check if file exists with a simple fetch
+                const checkResponse = await fetch(fileUrl, {
+                    method: 'GET',
+                    headers: { 'Range': 'bytes=0-0' } // Only fetch first byte to check existence
+                });
 
-                if (!response.ok) {
-                    // File not found
+                if (!checkResponse.ok) {
                     throw new Error('File not available');
                 }
 
-                // File exists, proceed with download
-                const a = document.createElement('a');
-                a.href = fileUrl;
-                a.download = filename;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                // File exists, trigger download
+                window.open(fileUrl, '_blank');
 
                 console.log(`Downloading pre-generated file: ${filename}`);
                 console.log(`URL: ${fileUrl}`);
 
                 // Show success message
-                alert('Download started! You can play this file anytime, even with your screen off. Each session is personalized for your tinnitus frequency and hearing profile.');
+                setTimeout(() => {
+                    alert('Download started! The file will open in a new tab. Right-click and "Save As" to download. You can play this file anytime, even with your screen off.');
+                }, 500);
 
             } catch (error) {
                 console.error('Download failed:', error);
 
                 // Show helpful error message
-                const availableFreqs = '8000 Hz';
+                const availableFreqs = '8000 Hz (normal hearing)';
                 const message = `Sorry, the audio file for ${selectedTinnitusFreq} Hz (${selectedHearingProfile} hearing) is not available yet.\n\n` +
-                                `Currently available frequencies: ${availableFreqs}\n\n` +
+                                `Currently available: ${availableFreqs}\n\n` +
                                 `You can either:\n` +
-                                `• Try the "Stream Now" option instead (works for all frequencies)\n` +
-                                `• Select 8000 Hz frequency (most common tinnitus pitch)\n` +
-                                `• Contact the developer to request this frequency`;
+                                `• Try "Stream Now" instead (works for all frequencies)\n` +
+                                `• Select 8000 Hz with normal hearing profile\n` +
+                                `• Wait for more files to be generated`;
 
                 alert(message);
             } finally {
@@ -608,9 +621,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle page visibility change
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden' && isPlaying) {
-            // Keep playing in background - research suggests 60 min daily listening
+    document.addEventListener('visibilitychange', async () => {
+        if (document.visibilityState === 'hidden' && isPlaying && audioContext) {
+            // Keep playing in background - try to resume if suspended
+            if (audioContext.state === 'suspended') {
+                try {
+                    await audioContext.resume();
+                    console.log('Audio context resumed while hidden');
+                } catch (err) {
+                    console.error('Failed to resume audio context:', err);
+                }
+            }
+        } else if (document.visibilityState === 'visible' && isPlaying && audioContext) {
+            // Resume when page becomes visible again
+            if (audioContext.state === 'suspended') {
+                try {
+                    await audioContext.resume();
+                    console.log('Audio context resumed when visible');
+                } catch (err) {
+                    console.error('Failed to resume audio context:', err);
+                }
+            }
+        }
+    });
+
+    // Handle audio context state changes
+    document.addEventListener('resume', async () => {
+        if (audioContext && audioContext.state === 'suspended' && isPlaying) {
+            try {
+                await audioContext.resume();
+                console.log('Audio context resumed on app resume');
+            } catch (err) {
+                console.error('Failed to resume audio:', err);
+            }
         }
     });
 
