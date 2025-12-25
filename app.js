@@ -543,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Download session
     if (downloadSession) {
-        downloadSession.addEventListener('click', () => {
+        downloadSession.addEventListener('click', async () => {
             if (!selectedTinnitusFreq) {
                 alert('Please complete the frequency matching first.');
                 return;
@@ -557,22 +557,53 @@ document.addEventListener('DOMContentLoaded', function() {
             const branch = 'main';
             const fileUrl = `https://raw.githubusercontent.com/${githubRepo}/${branch}/audio-files/${filename}`;
 
-            // Create download link
-            const a = document.createElement('a');
-            a.href = fileUrl;
-            a.download = filename;
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // Disable button temporarily
+            downloadSession.disabled = true;
+            const originalText = downloadSession.textContent;
+            downloadSession.textContent = 'Checking file...';
 
-            console.log(`Downloading pre-generated file: ${filename}`);
-            console.log(`URL: ${fileUrl}`);
+            try {
+                // Check if file exists
+                const response = await fetch(fileUrl, { method: 'HEAD' });
 
-            // Show success message
-            setTimeout(() => {
+                if (!response.ok) {
+                    // File not found
+                    throw new Error('File not available');
+                }
+
+                // File exists, proceed with download
+                const a = document.createElement('a');
+                a.href = fileUrl;
+                a.download = filename;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                console.log(`Downloading pre-generated file: ${filename}`);
+                console.log(`URL: ${fileUrl}`);
+
+                // Show success message
                 alert('Download started! You can play this file anytime, even with your screen off. Each session is personalized for your tinnitus frequency and hearing profile.');
-            }, 500);
+
+            } catch (error) {
+                console.error('Download failed:', error);
+
+                // Show helpful error message
+                const availableFreqs = '8000 Hz';
+                const message = `Sorry, the audio file for ${selectedTinnitusFreq} Hz (${selectedHearingProfile} hearing) is not available yet.\n\n` +
+                                `Currently available frequencies: ${availableFreqs}\n\n` +
+                                `You can either:\n` +
+                                `• Try the "Stream Now" option instead (works for all frequencies)\n` +
+                                `• Select 8000 Hz frequency (most common tinnitus pitch)\n` +
+                                `• Contact the developer to request this frequency`;
+
+                alert(message);
+            } finally {
+                // Re-enable button
+                downloadSession.disabled = false;
+                downloadSession.textContent = originalText;
+            }
         });
     }
 

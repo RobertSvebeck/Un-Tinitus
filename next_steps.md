@@ -1,4 +1,7 @@
-Furthermore, while synthetic harmonic complex sounds (with little 
+Note: For the other frequencies (1000, 2000, 4000, etc.), you can generate them later by running:
+  node generate-audio-files.js  # without --quick flag
+  
+  Furthermore, while synthetic harmonic complex sounds (with little 
 intrinsic listening appeal) were used for this experiment, they do not 
 necessarily need to be the modulation carrier. The modulation could be 
 applied across a range of natural or synthetic sounds that have sufficient 
