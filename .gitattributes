@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Git LFS for large audio files (uncomment if using Git LFS)
+# audio-files/*.mp3 filter=lfs diff=lfs merge=lfs -text
