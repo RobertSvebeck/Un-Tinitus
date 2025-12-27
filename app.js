@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const downloadSession = document.getElementById('downloadSession');
 
+    // Audio streaming elements
+    const treatmentAudio = document.getElementById('treatmentAudio');
+    const audioLoadingIndicator = document.getElementById('audioLoadingIndicator');
+    const audioLoadingProgress = document.getElementById('audioLoadingProgress');
+
     // ==================== AUDIO CONTEXT INITIALIZATION ====================
     function initAudio() {
         if (!audioContext) {
@@ -333,27 +338,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function startTimer() {
-        remainingSeconds = 3600; // 60 minutes
-        demoTimeRemaining.textContent = formatTime(remainingSeconds);
+        // Timer is now synced with audio timeupdate events
+        // This function just initializes the display
+        demoTimeRemaining.textContent = formatTime(3600);
         demoProgressBar.style.width = '0%';
-
-        timer = setInterval(() => {
-            remainingSeconds--;
-            demoTimeRemaining.textContent = formatTime(remainingSeconds);
-            const progress = (3600 - remainingSeconds) / 3600 * 100;
-            demoProgressBar.style.width = `${progress}%`;
-
-            if (remainingSeconds <= 0) {
-                stopTreatment(true);
-            }
-        }, 1000);
     }
 
     function stopTreatment(completed = false) {
         clearInterval(timer);
         isPlaying = false;
 
-        // Stop all oscillators
+        // Stop audio playback
+        if (treatmentAudio) {
+            treatmentAudio.pause();
+            treatmentAudio.currentTime = 0;
+        }
+
+        // Stop all oscillators (for Web Audio API test tones)
         currentOscillators.forEach(osc => {
             try {
                 osc.stop();
@@ -368,6 +369,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Release Wake Lock
         releaseWakeLock();
+
+        // Hide loading indicator
+        if (audioLoadingIndicator) {
+            audioLoadingIndicator.style.display = 'none';
+        }
+
+        // Re-enable start button
+        if (demoStartTreatment) {
+            demoStartTreatment.disabled = false;
+        }
 
         demoTreatmentProgress.style.display = 'none';
 
@@ -410,6 +421,102 @@ document.addEventListener('DOMContentLoaded', function() {
         demoProgressBar.style.width = '0%';
 
         frequencyMatching.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ==================== AUDIO ELEMENT EVENT LISTENERS ====================
+
+    // Audio loading progress
+    if (treatmentAudio) {
+        treatmentAudio.addEventListener('progress', () => {
+            if (treatmentAudio.buffered.length > 0) {
+                const buffered = treatmentAudio.buffered.end(treatmentAudio.buffered.length - 1);
+                const duration = treatmentAudio.duration;
+                if (duration > 0) {
+                    const percent = (buffered / duration) * 100;
+                    audioLoadingProgress.style.width = `${percent}%`;
+                }
+            }
+        });
+
+        // Audio can play through - enough data loaded
+        treatmentAudio.addEventListener('canplaythrough', () => {
+            console.log('Audio ready to play');
+            audioLoadingIndicator.style.display = 'none';
+            demoStartTreatment.disabled = false;
+        });
+
+        // Audio can start playing (but might need to buffer)
+        treatmentAudio.addEventListener('canplay', () => {
+            if (isPlaying && treatmentAudio.paused) {
+                treatmentAudio.play().then(() => {
+                    console.log('Audio playback started');
+                    startTimer();
+                }).catch(err => {
+                    console.error('Playback failed:', err);
+                    alert('Failed to start playback. Please try again.');
+                    stopTreatment(false);
+                });
+            }
+        });
+
+        // Audio is playing
+        treatmentAudio.addEventListener('playing', () => {
+            audioLoadingIndicator.style.display = 'none';
+        });
+
+        // Audio is waiting for more data (buffering)
+        treatmentAudio.addEventListener('waiting', () => {
+            console.log('Audio buffering...');
+            audioLoadingIndicator.querySelector('strong').textContent = '⏳ Buffering...';
+            audioLoadingIndicator.style.display = 'block';
+        });
+
+        // Audio playback ended
+        treatmentAudio.addEventListener('ended', () => {
+            console.log('Audio ended');
+            stopTreatment(true);
+        });
+
+        // Audio error
+        treatmentAudio.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+            let errorMsg = 'Failed to load audio file.';
+
+            if (treatmentAudio.error) {
+                switch (treatmentAudio.error.code) {
+                    case treatmentAudio.error.MEDIA_ERR_ABORTED:
+                        errorMsg = 'Audio loading was aborted.';
+                        break;
+                    case treatmentAudio.error.MEDIA_ERR_NETWORK:
+                        errorMsg = 'Network error while loading audio.';
+                        break;
+                    case treatmentAudio.error.MEDIA_ERR_DECODE:
+                        errorMsg = 'Audio file is corrupted or unsupported.';
+                        break;
+                    case treatmentAudio.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                        errorMsg = 'Audio file not found or not available yet.';
+                        break;
+                }
+            }
+
+            alert(`${errorMsg}\n\nPlease try:\n• Checking your internet connection\n• Using the "Download MP3 File" option instead\n• Selecting a different frequency (8000 Hz has all files available)`);
+            stopTreatment(false);
+        });
+
+        // Sync timer with actual audio time
+        treatmentAudio.addEventListener('timeupdate', () => {
+            if (isPlaying && treatmentAudio.duration > 0) {
+                const elapsed = treatmentAudio.currentTime;
+                const remaining = Math.floor(treatmentAudio.duration - elapsed);
+
+                if (remaining >= 0 && remaining !== remainingSeconds) {
+                    remainingSeconds = remaining;
+                    demoTimeRemaining.textContent = formatTime(remainingSeconds);
+                    const progress = (elapsed / treatmentAudio.duration) * 100;
+                    demoProgressBar.style.width = `${progress}%`;
+                }
+            }
+        });
     }
 
     // ==================== EVENT LISTENERS ====================
@@ -479,6 +586,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (masterGainNode) {
                 masterGainNode.gain.value = volume;
             }
+            if (treatmentAudio) {
+                treatmentAudio.volume = volume;
+            }
         });
     }
 
@@ -500,46 +610,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Treatment
+    // Treatment - Stream pre-generated audio
     if (demoStartTreatment) {
         demoStartTreatment.addEventListener('click', async () => {
-            if (initAudio()) {
-                isPlaying = true;
-                demoTreatmentProgress.style.display = 'block';
-                nextSoundScheduledTime = audioContext.currentTime;
+            if (!selectedTinnitusFreq) {
+                alert('Please complete the frequency matching first.');
+                return;
+            }
+
+            // Build file URL for GitHub raw content
+            const filename = `untinnitus-${selectedTinnitusFreq}Hz-${selectedHearingProfile}.mp3`;
+            const githubRepo = 'RobertSvebeck/Un-Tinitus';
+            const branch = 'main';
+            const fileUrl = `https://raw.githubusercontent.com/${githubRepo}/${branch}/audio-files/${filename}`;
+
+            // Show progress section
+            demoTreatmentProgress.style.display = 'block';
+            audioLoadingIndicator.style.display = 'block';
+            audioLoadingProgress.style.width = '0%';
+
+            // Disable start button during loading
+            demoStartTreatment.disabled = true;
+
+            // Set audio source and volume
+            treatmentAudio.src = fileUrl;
+            treatmentAudio.volume = volume;
+
+            // Try to load the audio
+            try {
+                await treatmentAudio.load();
 
                 // Request Wake Lock to prevent screen from sleeping
                 const wakeLockEnabled = await requestWakeLock();
-                if (!wakeLockEnabled) {
-                    // Show warning if wake lock not available
-                    const continueAnyway = confirm(
-                        'Wake Lock not supported on this browser.\n\n' +
-                        'Your screen may turn off and stop the audio during treatment.\n\n' +
-                        'Recommendations:\n' +
-                        '• Keep your screen on manually during the 60-minute session\n' +
-                        '• OR use the "Download MP3 File" option instead (plays even with screen off)\n\n' +
-                        'Continue with streaming anyway?'
-                    );
-                    if (!continueAnyway) {
-                        isPlaying = false;
-                        demoTreatmentProgress.style.display = 'none';
-                        return;
-                    }
-                } else {
-                    // Wake lock enabled
-                    alert('Screen will stay on during treatment. Do not manually lock your screen with the power button, as this will stop audio playback.');
-                }
 
                 // Initialize MediaSession for background playback
                 initializeMediaSession();
 
-                // Start scheduling sounds
-                scheduleNextSound();
-
-                // Start timer
-                startTimer();
+                isPlaying = true;
 
                 demoTreatmentProgress.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (error) {
+                console.error('Failed to load audio:', error);
+                alert(`Failed to load audio file: ${filename}\n\nPlease check your internet connection or try the "Download MP3 File" option instead.`);
+                demoTreatmentProgress.style.display = 'none';
+                demoStartTreatment.disabled = false;
+                isPlaying = false;
             }
         });
     }

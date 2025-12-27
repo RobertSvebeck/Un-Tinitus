@@ -298,7 +298,17 @@
                             </div>
                         </div>
 
+                        <!-- Hidden audio element for streaming treatment -->
+                        <audio id="treatmentAudio" preload="none" style="display:none;"></audio>
+
                         <div id="demoTreatmentProgress" class="mt-3" style="display:none;">
+                            <div id="audioLoadingIndicator" class="alert alert-info" style="display:none;">
+                                <strong>⏳ Loading audio...</strong>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div id="audioLoadingProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="d-block mt-1">Buffering your personalized treatment (~55MB)</small>
+                            </div>
                             <div class="progress">
                                 <div id="demoProgressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
                             </div>
